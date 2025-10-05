@@ -15,7 +15,7 @@ export default function Page() {
             <SignOutButton style={styles.signOutButton} />
           </View>
           <View style={styles.content}>
-            {/* <EnableNFCButton style={styles.enableNFCButton} /> */}
+            <EnableNFCButton style={styles.enableNFCButton} />
           </View>
           
         </SignedIn>
@@ -36,12 +36,16 @@ export default function Page() {
 const styles = {
   container: {
     flex: 1,
-    paddingVertical: 24
+    backgroundColor: '#eeeeee',
   },
   header : {
     alignItems: 'flex-end',
-    paddingRight: 24,
-    paddingTop: 10,
+    paddingRight: 20,
+    height: 65,
+    justifyContent: 'center',
+    backgroundColor: '#ffffff',
+    paddingTop: 20,
+    boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.3)',
   },
   content: {
     alignItems: 'center',

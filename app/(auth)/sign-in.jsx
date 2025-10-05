@@ -1,6 +1,6 @@
 import { useSignIn } from '@clerk/clerk-expo'
 import { Link, useRouter } from 'expo-router'
-import { Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { Text, TextInput, TouchableOpacity, View, Image } from 'react-native'
 import { LogIn } from 'lucide-react-native'
 import React from 'react'
 
@@ -41,6 +41,7 @@ export default function Page() {
 
   return (
     <View style={styles.container}>
+      <Image source={require('../../assets/images/header.png')} style={styles.image} />
       <Text style={styles.title}>Login</Text>
       <TextInput
         style={styles.input}
@@ -75,6 +76,12 @@ const styles = {
     padding: 16,
     backgroundColor: '#fff',
     alignItems: 'center',
+  },
+  image: {
+    width: 300,
+    height: 300,
+    marginBottom: 16,
+    borderRadius: 500,
   },
   title: {
     fontSize: 24,

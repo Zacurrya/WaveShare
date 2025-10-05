@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, TouchableOpacity, Alert } from 'react-native';
 import NfcManager, { NfcEvents, ndef, NfcTech } from 'react-native-nfc-manager';
 import { SmartphoneNfc } from 'lucide-react-native';
 import { useUser } from '@clerk/clerk-expo';
@@ -7,17 +7,11 @@ import { useUser } from '@clerk/clerk-expo';
 // Initialize the NFC Manager
 NfcManager.start();
 
-const CreateVCardString = () => {
-    const { user } = useUser();
-
-    // Map user data to vCard format
-    const fullName = user.fullName || `${user.firstName} ${user.lastName}`;
-    // const phoneNumber = 
-
-    // Construct vCard string
+const createVCardString = (fullName) => {
+    const safeName = fullName || '';
     const vCard = `BEGIN:VCARD
     VERSION:3.0
-    FN: ${fullName}
+    FN: ${safeName}
     TEL;TYPE=CELL:+447555494219
     END:VCARD`;
     return vCard;
@@ -25,7 +19,7 @@ const CreateVCardString = () => {
 
 const PassiveNfcWriter = () => {
     const [isNfcEnabled, setIsNfcEnabled] = useState(false);
-    const { isLoaded, isSignedIn, user } = useUser();
+    const { user } = useUser();
     const [isReadyToWrite, setIsReadyToWrite] = useState(false);
     const [status, setStatus] = useState('Tap button to prepare for writing');
 
@@ -46,8 +40,9 @@ const PassiveNfcWriter = () => {
             await NfcManager.requestTechnology(NfcTech.Ndef);
 
             // Encode the vCard string into NDEF format
+            const fullName = user?.fullName || `${user?.firstName ?? ''} ${user?.lastName ?? ''}`.trim();
             const bytes = ndef.encodeMessage([
-            ndef.mimeRecord('text/vcard', CreateVCardString()),
+            ndef.mimeRecord('text/vcard', createVCardString(fullName)),
             ]);
 
             // Write the NDEF message to the tag
@@ -70,12 +65,12 @@ const PassiveNfcWriter = () => {
         return () => {
         NfcManager.setEventListener(NfcEvents.DiscoverTag, null);
         };
-    }, [isReadyToWrite]); // Dependency array includes isReadyToWrite
+    }, [isReadyToWrite, user?.fullName, user?.firstName, user?.lastName]);
 
     const armForWriting = () => {
         if (isNfcEnabled) {
             setIsNfcEnabled(false);
-            setStatus('');
+            setStatus('Tap button to prepare for writing');
         } else {
             setIsReadyToWrite(true);
             setStatus('Ready to scan! Bring a tag near the phone.');
